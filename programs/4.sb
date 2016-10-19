@@ -1,0 +1,38 @@
+Sensor.SetMode(3,0)
+Sensor.SetMode(1,0)
+
+Pk = 0.09
+Kk = 0.0016
+Sp = 30
+Ser = 48
+Stop = 1
+Trigger = 1
+
+Thread.Run = Start_Stop
+
+Sub Start_Stop
+  While "True"
+    If Sensor.ReadRawValue(1,0) < 40 Then
+      Stop = 0
+    Else
+      Stop = 1
+    EndIf
+    
+    If Sensor.ReadPercent(4) > 50 Then
+      If Trigger = 0 Then
+        Trigger = 1
+      Else 
+        Trigger = 0
+      EndIf
+      Speaker.Note(75, "D5", 1000)
+      Speaker.Wait()
+    EndIf  
+  EndWhile
+EndSub
+
+
+While "True"
+  Er = Sensor.ReadPercent(3) - Ser
+  V = Er*Pk + Er*Er*Er*Kk/10
+  Motor.StartSync("BC", (Sp+V) * Stop * Trigger, (Sp-V) * Stop * Trigger)
+EndWhile

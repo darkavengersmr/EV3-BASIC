@@ -1,0 +1,23 @@
+Sensor.SetMode(4,0)
+While Sensor.ReadPercent(4) = 0
+EndWhile
+A = EV3.Time
+While Sensor.ReadPercent(4) = 100
+EndWhile
+B = EV3.Time
+X = B - A
+Program.Delay(1000)
+While Sensor.ReadPercent(4) = 0
+EndWhile
+A = EV3.Time
+While Sensor.ReadPercent(4) = 100
+EndWhile
+B = EV3.Time
+z = A - B
+If X > 1000 Then
+  Motor.Schedule("BC",100,z / 3,z / 3,z / 3,"True")
+  Motor.Wait("BC")
+Else
+  Motor.Schedule("BC",-100,z / 3,z / 3,z / 3,"True")
+  Motor.Wait("BC")
+EndIf

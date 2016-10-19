@@ -1,0 +1,5 @@
+Скопировать файл SmallBasicEV3Extension.ru.XML
+в папку
+c:\Program Files (x86)\Microsoft\Small Basic\Lib\
+или
+c:\Program Files\Microsoft\Small Basic\Lib\

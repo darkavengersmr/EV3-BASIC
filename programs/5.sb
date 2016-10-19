@@ -1,0 +1,34 @@
+Sensor.SetMode(2,0)
+Sensor.SetMode(2,1)
+Sensor.SetMode(2,0)
+Sensor.SetMode(2,1)
+Sensor.SetMode(2,0)
+
+Napr = 0
+Er = 0
+Pk = 1.8
+Kk = 0.003
+Sp = 20
+
+Thread.Run = NAPRAVLENIE
+
+Sub NAPRAVLENIE
+  While "True"
+    
+    For Napr = 0 To 360
+      Program.Delay(30)
+    EndFor
+    
+    For Napr = 360 To 0 Step -1
+      Program.Delay(30)
+    EndFor
+    
+  EndWhile
+EndSub
+
+
+While "True"
+  Er = Napr - Sensor.ReadRawValue(2,0)
+  V = Er * Pk + Er * Er * Er * Kk
+  Motor.StartSync("BC", Sp-V, Sp+V)
+EndWhile

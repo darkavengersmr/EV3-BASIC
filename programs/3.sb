@@ -1,0 +1,42 @@
+Sensor.SetMode(2,0)
+Sensor.SetMode(2,1)
+Sensor.SetMode(2,0)
+Sensor.SetMode(1,0)
+Sensor.SetMode(3,0)
+Sensor.SetMode(4,0)
+
+Thread.Run = FLAG
+
+S = 15
+
+Sub FLAG
+  Motor.ResetCount("A")
+  Pk = 0.15
+  Kk = 0.0001
+  While "True"
+    Er = Sensor.ReadRawValue(2,0) + Motor.GetCount("A")
+    V = Er*Pk + Er*Er*Er*Kk 
+    Motor.Start("A",-V)
+  EndWhile
+EndSub
+
+
+
+
+While Sensor.ReadPercent(4) < 50
+  Program.Delay(1)
+EndWhile
+While "True"
+  Motor.StartSync("BC", S, -S)
+  If Sensor.ReadPercent(1) < 63 Then
+    Motor.Stop("BC","True") 
+    Motor.ResetCount("BC")
+    Motor.StartSync("BC", 50, 50)
+    While Sensor.ReadPercent(3) > 25
+      Program.Delay(1)
+    EndWhile
+    Motor.Stop("BC","True")    
+    Motor.MoveSync("BC", -50, -50, Motor.GetCount("C"), "True")
+    Motor.Stop("BC","True")    
+  EndIf
+EndWhile 

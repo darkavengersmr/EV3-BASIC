@@ -1,0 +1,55 @@
+Sensor.SetMode(1,0)
+Sensor.SetMode(3,0)
+Sensor.SetMode(2,0)
+Sensor.SetMode(2,1)
+Sensor.SetMode(2,0)
+Sensor.SetMode(2,1)
+Sensor.SetMode(2,0)
+
+Bl_Keg = 100
+Dl_keg = 0
+Am_Bl_Keg = 0
+Am_Dl_keg = 0
+loop = "True"
+
+Motor.StartSync("BC", 10, -10)
+
+While loop
+  
+  Gyro = Sensor.ReadRawValue(2,0)
+  IR = Sensor.ReadRawValue(1,0)
+  If Gyro < -360 Then
+    loop = "Falce"
+  EndIf
+  
+  If IR < Bl_Keg Then
+    Bl_Keg = IR
+    Am_Bl_Keg = Gyro 
+  EndIf
+  
+  If IR > Dl_keg Then
+    Dl_Keg = IR
+    Am_Dl_keg = Gyro
+  EndIf
+  
+EndWhile
+
+Motor.Stop("BC", "True")
+
+LCD.Clear()
+LCD.Text(1, 0, 0, 1, Bl_keg)
+LCD.Text(1, 50, 0, 1, Am_Bl_keg)
+LCD.Text(1, 0, 20, 1, Dl_keg)
+LCD.Text(1, 50, 20, 1, Am_Dl_keg)
+
+Motor.StartSync("BC", -10, 10)
+While Sensor.ReadRawValue(2,0) < Am_Bl_Keg - 5  
+EndWhile
+Motor.Stop("BC", "True")
+
+Motor.Schedule("BC", 30, 100, 10000, 100, "True")
+While Sensor.ReadPercent(3) > 25    
+EndWhile
+Motor.Stop("BC","False")
+Motor.Schedule("BC", 30, 0, 0, 100, "True")
+Motor.Wait("BC")
